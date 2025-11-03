@@ -1,0 +1,168 @@
+@startuml
+' ================================
+' CorpConnect Microservices Model
+' ================================
+
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #FDFDFD
+skinparam class {
+  BackgroundColor White
+  ArrowColor Black
+  BorderColor #333
+  FontSize 12
+  FontColor Black
+}
+
+' ====================================
+' USER SERVICE
+' ====================================
+
+package "User Service" #LightBlue {
+  class User {
+    +userid : UUID
+    +name : String
+    +email : String
+    +role : String
+    +departmentid : UUID
+    +profile_url : String
+    +skills : String
+  }
+
+  class Department {
+    +department_id : UUID
+    +name : String
+  }
+
+  class Skill {
+    +skill_id : UUID
+    +name : String
+  }
+
+  class UserSkill {
+    +userid : UUID
+    +skillid : UUID
+  }
+}
+
+' ====================================
+' PROJECT SERVICE
+' ====================================
+
+package "Project Service" #LightGreen {
+  class Project {
+    +projectid : UUID
+    +name : String
+    +description : String
+    +managerid : UUID
+    +startdate : Date
+    +enddate : Date
+  }
+}
+
+' ====================================
+' TICKET SERVICE
+' ====================================
+
+package "Ticket Service" #LightYellow {
+  class Ticket {
+    +ticketid : UUID
+    +title : String
+    +type : String
+    +status : String
+    +createdby : UUID
+    +assignedto : UUID
+    +departmentid : UUID
+    +project_id : UUID
+  }
+
+  class ChatMessage {
+    +messageid : UUID
+    +ticketid : UUID
+    +sender_id : UUID
+    +message : Text
+    +timestamp : DateTime
+  }
+
+  class FreelancerTask {
+    +taskid : UUID
+    +assignedto : UUID
+    +ticket_id : UUID
+    +description : String
+    +status : String
+    +deadline : Date
+  }
+
+  class PaymentRequest {
+    +paymentid : UUID
+    +ticketid : UUID
+    +amount : Decimal
+    +status : String
+    +requestedby : UUID
+    +paidto : UUID
+  }
+}
+
+' ====================================
+' HR SERVICE
+' ====================================
+
+package "HR Service" #LightCoral {
+  class InterviewSlot {
+    +slotid : UUID
+    +candidateid : UUID
+    +scheduledby : UUID
+    +datetime : DateTime
+    +vclink : String
+  }
+
+  class TrainingSession {
+    +sessionid : UUID
+    +trainerid : UUID
+    +scheduledby : UUID
+    +topic : String
+    +datetime : DateTime
+    +duration : Integer
+    +vclink : String
+    +status : String
+  }
+
+  class TrainingAttendee {
+    +sessionid : UUID
+    +userid : UUID
+  }
+}
+
+' ====================================
+' RELATIONSHIPS BETWEEN ENTITIES
+' ====================================
+
+' User Service Relationships
+User --> Department
+UserSkill --> User
+UserSkill --> Skill
+
+' Ticket Service Relationships
+Ticket --> User : createdby
+Ticket --> User : assignedto
+Ticket --> Department
+Ticket --> Project
+ChatMessage --> Ticket
+ChatMessage --> User : sender
+FreelancerTask --> Ticket
+FreelancerTask --> User : assignedto
+PaymentRequest --> Ticket
+PaymentRequest --> User : requestedby
+PaymentRequest --> User : paid_to
+
+' HR Service Relationships
+InterviewSlot --> User : candidate
+InterviewSlot --> User : scheduledby
+TrainingSession --> User : trainer
+TrainingSession --> User : scheduledby
+TrainingAttendee --> TrainingSession
+TrainingAttendee --> User
+
+' Project relationships
+Project --> User : manager
+
+@enduml
