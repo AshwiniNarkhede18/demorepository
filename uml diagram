@@ -1,1 +1,237 @@
 Now I am going to explain u complete flow of my project once again There is one company portal on which employee login nd portal visible after login employee who r manager and he they should visible 2 box ticket raising and hiring nd all employee expect hr nd manager see only 1 box ticket raising Scenario 1- manager/HR click on hiring box nd do posting for position which post visible on company career page candidates can apply on that open position and applied candidate list visible to manager and hr then manager doing filter here as per exp skills and on that basis he send some shortlisted candidates list to hr and hr according to timeslot shedule interivew of shorlisted candidates with manager after completion of interivew manager final some candidate and mark them as a accept and other one as a rejected from the list of applied candidate and the candidate who is selected got congratulations mail that u r selected Scenario 2nd- now all employee visible ticket raise box and now 1 employe want mouse he raised ticket and that ticket visible to their respective departments so now mouse ticket raise visible to its dept and one of employee from that dept accept that ticket as soon as he accept ticket notification goes to that employee ticket accepted and now other employee from that dept not able to accept that ticket their is chat like messanger also so that employee nd that ticket accepter can do chat also nd once issue resolved that dept employee click on done option So this is my project flow ask if u have some doubts in project ask deeply analyze deeply I am doing project using microservices springboot jwt security react and MySQL in backend do u have any doubts ask deeply
+
+
+
+@startuml
+
+' ===========================
+' UserService
+' ===========================
+
+class User {
+  +user_id: String
+  +email: String
+  +password_hash: String
+  +first_name: String
+  +last_name: String
+  +role: Role
+  +department: Department
+  +is_active: Boolean
+  +created_at: Timestamp
+}
+
+enum Role {
+  EMPLOYEE
+  MANAGER
+  HR
+  FINANCE
+  ADMIN
+  IT_STAFF
+}
+
+enum Department {
+  IT
+  HR
+  FINANCE
+  ADMIN
+  OTHER
+}
+
+class UserSession {
+  +session_id: String
+  +user_id: String
+  +token: String
+  +expires_at: Timestamp
+  +is_active: Boolean
+  +created_at: Timestamp
+}
+
+class DepartmentMeta {
+  +department_id: String
+  +department_name: String
+  +description: Text
+  +is_active: Boolean
+  +created_at: Timestamp
+}
+
+class SystemEvent {
+  +event_id: String
+  +event_type: EventType
+  +user_id: String
+  +title: String
+  +message: Text
+  +action: String
+  +entity_type: String
+  +entity_id: String
+  +ip_address: String
+  +is_read: Boolean
+  +created_at: Timestamp
+}
+
+enum EventType {
+  NOTIFICATION
+  AUDIT_LOG
+  SYSTEM_EVENT
+}
+
+User --> UserSession
+User --> SystemEvent
+User --> DepartmentMeta
+
+' ===========================
+' HiringService
+' ===========================
+
+class HiringTicket {
+  +ticket_id: String
+  +raised_by_user_id: String
+  +title: String
+  +description: Text
+  +required_skills: Text
+  +budget_range: String
+  +status: TicketStatus
+  +is_public: Boolean
+  +created_at: Timestamp
+}
+
+enum TicketStatus {
+  OPEN
+  CLOSED
+}
+
+class CandidateProfile {
+  +candidate_id: String
+  +email: String
+  +full_name: String
+  +phone: String
+  +resume_url: String
+  +skills: Text
+  +experience_years: Int
+  +created_at: Timestamp
+}
+
+class CandidateApplication {
+  +application_id: String
+  +candidate_id: String
+  +hiring_ticket_id: String
+  +manager_status: ManagerStatus
+  +application_status: ApplicationStatus
+  +applied_at: Timestamp
+}
+
+enum ManagerStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum ApplicationStatus {
+  APPLIED
+  INTERVIEW_SCHEDULED
+  SELECTED
+  REJECTED
+}
+
+class Interview {
+  +interview_id: String
+  +application_id: String
+  +slot_id: String
+  +scheduled_by_user_id: String
+  +meeting_link: String
+  +status: InterviewStatus
+  +manager_feedback: Text
+  +final_selection: FinalSelection
+  +created_at: Timestamp
+}
+
+enum InterviewStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+enum FinalSelection {
+  SELECTED
+  REJECTED
+  PENDING
+}
+
+class ManagerSlot {
+  +slot_id: String
+  +user_id: String
+  +slot_date: Date
+  +slot_time: Time
+  +is_available: Boolean
+  +created_at: Timestamp
+}
+
+HiringTicket --> CandidateApplication
+CandidateProfile --> CandidateApplication
+CandidateApplication --> Interview
+User --> ManagerSlot
+
+' ===========================
+' TicketingService
+' ===========================
+
+class InternalTicket {
+  +ticket_id: String
+  +raised_by_user_id: String
+  +title: String
+  +description: Text
+  +department: Department
+  +assigned_to_user_id: String
+  +priority: Priority
+  +status: InternalTicketStatus
+  +created_at: Timestamp
+  +updated_at: Timestamp
+  +resolved_at: Timestamp
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum InternalTicketStatus {
+  OPEN
+  ASSIGNED
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+class TicketChatMessage {
+  +message_id: String
+  +ticket_id: String
+  +sender_user_id: String
+  +message_text: Text
+  +attachment_url: String
+  +is_read: Boolean
+  +created_at: Timestamp
+}
+
+class TicketActivity {
+  +activity_id: String
+  +ticket_id: String
+  +user_id: String
+  +activity_type: ActivityType
+  +description: Text
+  +created_at: Timestamp
+}
+
+enum ActivityType {
+  CREATED
+  ASSIGNED
+  ACCEPTED
+  RESOLVED
+  MESSAGE
+}
+
+InternalTicket --> TicketChatMessage
+InternalTicket --> TicketActivity
+User --> InternalTicket
+
+@enduml
