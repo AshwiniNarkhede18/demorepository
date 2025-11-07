@@ -235,3 +235,39 @@ InternalTicket --> TicketActivity
 User --> InternalTicket
 
 @enduml
+
+
+
+
+
+i am explaining again 
+on home page in navigation bar after login options are- employee profile home about services logout these option avaiable 
+in services dropdown is avaialbe which contain 2 1) internal ticket(visible to all)
+2) hiring (hiring visible to only Rolw-HR,manager,Admin ) remaining will see only 1st option 
+when employee click on ticket raise option 
+new page open 
+which contain 3 options 
+1)  i am facing issue 
+2) i need new service
+3) i am looking for solution
+
+if employee want new service he will click on it form will open that contain 
+title ,description,forwhich dept ,priority 
+raise ticket button once employee click on button notification goes to that dept head for which ticket generated then dept head got notifcation then he open his dashboard nd click on view ticket he will seen 
+ticket id,issue, date ,raisedby (employee name) ,priority ,status, assignedto/accept ,chat option is there for dept head if dept head want t oaccept ticket he ccan accept or he can assigned ticket to employee who work in that dept (he click on assigned to button dropdown came where all employee name mention who work in that specific dept )As soon as he assigned ticket notification goes to that employee jisko ticket assigned kiya then in view ticket he will see ticketid,date,raisedby,status,issue,CHAT option 
+dept head assigned employee can do live chat with employee who eaised ticket like whatsapp app small popbox is there nd chatting will happen  once they solve issue as soon as assingdone click on status(close) ticket sttus changes to close nd also status changes in employee view ticket optipon who raisee ticket to close 
+employee who raise ticket in there dashboard tviewticket option contain ticketid issue date acceptedby ,status nd chat 
+
+now suppose manager wants to hire a employee for company reqirement then manager click on services option in which hiring option present click on it there r again 2 option view ticket and create job post option avaible 
+if maanger wants to generate post he will click on create jobpost  form will open which contain title post ,description,required skills,exp and generate post button as soon as click on post button this ticket means this job post goes on job portal where candidate do registration ccreate their profile and apply to this job 
+candidate registation contain (name ,email,password, email verification code mob no veritification code ) then login after that candidate profile created where he can sees all job post generatedby companies manager and he can apply as soon as he click on apply button form will open which contain name,email ,skills,experience ,location, attach resumepdf option and submit button once he submit he can see all submited application by click on view applied jobs option 
+which contain appliedfor (job) , ticket id ,status(shortlisted/rejected) ,dateofapply
+means he can check status by clicking on viewapplied job option
+
+manager when click on view ticket he will see ticketid ,jobpost,status and viewapplicant option 
+as soon as manager/hr can click on viewapplicant new page open where manager /hr will able to see all candidate list jisne us job post ke liye apply kiya he which contain 
+ticketid,postappliedfor ,candidsatename,candidateemail,skills,exp,shortlisted/reject ,interviewshedule ,date of apply ,final select ,viewResume 
+
+by which manager/hr will gate complete info hr/maanger can shortlist candidate by filter skills,exp,by viewing resume etc  and maanger shortlist candidate as soon as candidate shortlist mail send to that manager congraultations u r shortlist for interview and also candidate appliedjob status changes to shortlisted then for interview shedule jaise hi HR click on interivew shedule he we see avaialbe slots date wise of maanger(jis manager ne job post kiya tha) uske avaialbetimeslot  date wise visble hoga as soon as hr click on 1 slot for 1 candidate alert come are u sure u want to shedule interview wthis this candidate name on date at time when hr clicks yes same time automatic mail goes to manager as well as candidate (canddiate mail structuee contain - congraultations ur interview sheduled on date at timealong with interview invitation link )and maanger mail strcuture(your interview sheduke on this date at this time with candidate name along with that candidate 
+resume pdf inivitation link ) before 1day of interview manager get notification also that your interview then before 1 hr also notification come to manager once interview done throufh videocall if manager like manager click selected as sson as he click select autogeenrated mail goes to candidate congraulations u r selected!!) and status changes to selected in candidate profile also 
+and then hr mark ticket a closed
