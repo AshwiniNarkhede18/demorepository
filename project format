@@ -1,0 +1,90 @@
+ Core Application
+
+Backend Framework:
+
+Spring Boot (Microservices architecture)
+
+
+Frontend Framework:
+
+React.js
+
+
+Database:
+
+MySQL (Relational DB for structured data)
+
+
+API Gateway:
+
+Spring Cloud Gateway
+
+
+Security:
+
+Spring Security + JWT/OAuth 2.0
+
+
+
+
+✅ Real-Time & Event-Driven
+
+Apache Kafka → For event streaming (notifications, status updates, inter-service communication)
+Spring WebSocket → For real-time chat and live dashboard updates
+
+
+✅ File Handling & PDF Processing
+
+Apache Tika → Extract text from PDFs for keyword search
+Apache PDFBox → Validate and manipulate PDF files
+MinIO → Open-source S3-compatible storage for resumes
+ClamAV → Open-source antivirus for scanning uploaded files
+
+
+✅ AI & NLP (Open Source)
+
+spaCy → Resume parsing (skills, experience extraction)
+HuggingFace Transformers → Semantic matching for candidate-job fit
+Tesseract OCR → For scanned PDF text extraction (if needed)
+
+
+✅ Search & Ranking
+
+Elasticsearch → Fast candidate/job search and filtering
+Sentence-BERT (via HuggingFace) → Intelligent skill matching
+
+
+✅ Caching & Performance
+
+Redis → In-memory cache for sessions, availability slots, and notifications
+
+
+✅ Notifications
+
+Firebase Cloud Messaging (FCM) → Push notifications
+SMTP (Postfix or SendGrid free tier) → Email notifications
+Twilio Free Tier → SMS alerts (optional)
+
+
+✅ Video Interview Integration
+
+WebRTC → Open-source video calling
+Jitsi Meet API → Free video conferencing integration
+
+
+✅ Deployment & Scalability
+
+Docker + Kubernetes (K8s) → Containerization and orchestration
+Prometheus + Grafana → Monitoring and analytics
+
+
+✅ Security & Compliance
+
+Spring Security + JWT/OAuth 2.0 → Role-based access control
+OWASP Dependency Check → Vulnerability scanning
+
+
+✅ Frontend Enhancements
+
+PDF.js → Preview resumes in browser
+Open-source Chat UI → For internal ticket chat (WhatsApp-style)
