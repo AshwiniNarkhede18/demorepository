@@ -271,3 +271,186 @@ ticketid,postappliedfor ,candidsatename,candidateemail,skills,exp,shortlisted/re
 by which manager/hr will gate complete info hr/maanger can shortlist candidate by filter skills,exp,by viewing resume etc  and maanger shortlist candidate as soon as candidate shortlist mail send to that manager congraultations u r shortlist for interview and also candidate appliedjob status changes to shortlisted then for interview shedule jaise hi HR click on interivew shedule he we see avaialbe slots date wise of maanger(jis manager ne job post kiya tha) uske avaialbetimeslot  date wise visble hoga as soon as hr click on 1 slot for 1 candidate alert come are u sure u want to shedule interview wthis this candidate name on date at time when hr clicks yes same time automatic mail goes to manager as well as candidate (canddiate mail structuee contain - congraultations ur interview sheduled on date at timealong with interview invitation link )and maanger mail strcuture(your interview sheduke on this date at this time with candidate name along with that candidate 
 resume pdf inivitation link ) before 1day of interview manager get notification also that your interview then before 1 hr also notification come to manager once interview done throufh videocall if manager like manager click selected as sson as he click select autogeenrated mail goes to candidate congraulations u r selected!!) and status changes to selected in candidate profile also 
 and then hr mark ticket a closed
+
+
+
+
+I’ve finalized the schema for my Ticket Service. Now I want you to generate the complete backend codebase for this microservice using Spring Boot.
+
+📌 Please generate:
+
+1. ✅ pom.xml:
+
+Spring Boot 3.x
+
+Spring Web, Spring Data JPA, MySQL, Spring Security, Eureka Client, Kafka, MinIO, Lombok, Validation, DevTools
+
+Include dependencies for RestTemplate and JSON
+
+
+
+2. ✅ Security setup (same as User Service):
+
+JWT-based authentication
+
+JwtAuthenticationFilter, SecurityConfig, CustomUserDetailsService (calls User Service via RestTemplate)
+
+Role-based access using @PreAuthorize
+
+
+
+3. ✅ Folder/package structure:
+
+entity, dto, repo, service, controller, security, config, exception, client, util
+
+
+
+4. ✅ Entity classes:
+
+Ticket, TicketComment, TicketChatSession, TicketEvent, TicketAttachment
+
+Use UUIDs, audit fields, and proper JPA annotations
+
+
+
+5. ✅ DTOs:
+
+CreateTicketRequest, TicketResponse, CommentRequest, AssignTicketRequest, etc.
+
+
+
+6. ✅ Repositories:
+
+JPA interfaces for all entities
+
+
+
+7. ✅ Services:
+
+TicketService interface and TicketServiceImpl
+
+Methods for create, assign, comment, close, fetch by role, etc.
+
+
+
+8. ✅ Controllers:
+
+TicketController with endpoints:
+
+POST /api/tickets
+
+GET /api/tickets/my
+
+GET /api/tickets/dept
+
+POST /api/tickets/{id}/assign
+
+POST /api/tickets/{id}/comment
+
+POST /api/tickets/{id}/close
+
+
+
+
+9. ✅ RestTemplate integration:
+
+UserClient to fetch user info from User Service
+
+Use RestTemplate bean from RestTemplateConfig
+
+
+
+10. ✅ Kafka integration:
+
+Publish ticket events (e.g., ticket.created, ticket.assigned)
+
+Use KafkaTemplate and topic constants
+
+
+
+11. ✅ MinIO integration:
+
+Upload and retrieve attachments
+
+Use presigned URLs and MinioUtil
+
+
+
+12. ✅ Exception handling:
+
+GlobalExceptionHandler, NotFoundException, UnauthorizedException, etc.
+
+
+
+13. ✅ application.yml:
+
+Include datasource, Kafka, MinIO, Eureka, JWT, and logging config
+
+
+
+
+📌 Notes:
+
+Use CHAR(36) for UUIDs
+
+Use @PreAuthorize for role-based access
+
+Use @Transactional where needed
+
+Use RestTemplate to call User Service for user info (e.g., raisedBy, assignedTo)
+
+
+Once this is done, I’ll move on to testing and integrating with the frontend.
+
+Ticket Service schema
+tickets
+id CHAR(36) PK
+ticket_number VARCHAR(64) UNIQUE NOT NULL  -- e.g., TICK-20251109-0001
+title VARCHAR(255) NOT NULL
+description TEXT
+department_id CHAR(36) FK -> departments(id) NOT NULL
+priority VARCHAR(20) NOT NULL   -- e.g., LOW, MEDIUM, HIGH, URGENT
+status VARCHAR(30) NOT NULL     -- NEW, ACCEPTED, ASSIGNED, IN_PROGRESS, RESOLVED, CLOSED
+raised_by CHAR(36) FK -> users(id) NOT NULL
+assigned_to CHAR(36) FK -> users(id) NULL
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+closed_at TIMESTAMP NULL
+sla_due_at TIMESTAMP NULL
+is_deleted TINYINT(1) DEFAULT 0
+
+Indexes: department_id, raised_by, assigned_to, status, priority, ticket_number
+
+ticket_comments (chat messages attached to ticket history; persisted)
+id CHAR(36) PK
+ticket_id CHAR(36) FK -> tickets(id) ON DELETE CASCADE
+sender_id CHAR(36) FK -> users(id)
+message TEXT
+is_internal TINYINT(1) DEFAULT 0   -- whether only visible to staff
+attachments JSON NULL              -- array of MinIO object keys / metadata
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+ticket_chat_sessions (optional session mapping for live chat)
+id CHAR(36) PK
+ticket_id CHAR(36) FK -> tickets(id) ON DELETE CASCADE
+session_id VARCHAR(128) UNIQUE NOT NULL  -- socket.io session id
+started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+ended_at TIMESTAMP NULL
+
+ticket_events (audit trail)
+id CHAR(36) PK
+ticket_id CHAR(36) FK -> tickets(id)
+event_type VARCHAR(50) NOT NULL  -- CREATED, ASSIGNED, COMMENTED, STATUS_CHANGED, CLOSED
+payload JSON NULL
+performed_by CHAR(36) FK -> users(id)
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+ticket_attachments
+id CHAR(36) PK
+ticket_id CHAR(36) FK -> tickets(id) ON DELETE CASCADE
+uploaded_by CHAR(36) FK -> users(id)
+object_key VARCHAR(512) NOT NULL -- MinIO object key
+file_name VARCHAR(255)
+mime_type VARCHAR(100)
+size_bytes BIGINT
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
