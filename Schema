@@ -1,0 +1,115 @@
+CREATE TABLE tickets (
+  id CHAR(36) PRIMARY KEY,
+  ticket_number VARCHAR(64) UNIQUE NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
+  department_id CHAR(36) NOT NULL,
+  priority VARCHAR(20) NOT NULL,
+  status VARCHAR(30) NOT NULL,
+  raised_by CHAR(36) NOT NULL,
+  assigned_to CHAR(36),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  closed_at TIMESTAMP NULL,
+  sla_due_at TIMESTAMP NULL,
+  is_deleted TINYINT(1) DEFAULT 0,
+  INDEX(department_id), INDEX(raised_by), INDEX(assigned_to), INDEX(status), INDEX(priority), INDEX(ticket_number)
+);
+
+CREATE TABLE ticket_comments (
+  id CHAR(36) PRIMARY KEY,
+  ticket_id CHAR(36) NOT NULL,
+  sender_id CHAR(36),
+  message TEXT,
+  is_internal TINYINT(1) DEFAULT 0,
+  attachments JSON,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (ticket_id) REFERENCES tickets(id) ON DELETE CASCADE
+);
+
+CREATE TABLE ticket_chat_sessions (
+  id CHAR(36) PRIMARY KEY,
+  ticket_id CHAR(36) NOT NULL,
+  session_id VARCHAR(128) UNIQUE NOT NULL,
+  started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  ended_at TIMESTAMP NULL,
+  FOREIGN KEY (ticket_id) REFERENCES tickets(id) ON DELETE CASCADE
+);
+
+CREATE TABLE ticket_events (
+  id CHAR(36) PRIMARY KEY,
+  ticket_id CHAR(36),
+  event_type VARCHAR(50) NOT NULL,
+  payload JSON,
+  performed_by CHAR(36),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE ticket_attachments (
+  id CHAR(36) PRIMARY KEY,
+  ticket_id CHAR(36) NOT NULL,
+  uploaded_by CHAR(36),
+  object_key VARCHAR(512) NOT NULL,
+  file_name VARCHAR(255),
+  mime_type VARCHAR(100),
+  size_bytes BIGINT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (ticket_id) REFERENCES tickets(id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE outbox (
+    id VARCHAR(36) PRIMARY KEY,
+    event_type VARCHAR(100) NOT NULL,
+    payload JSON NOT NULL,
+    status VARCHAR(20) DEFAULT 'PENDING',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO roles (id, name) VALUES (UUID(), 'ADMIN');
+INSERT INTO roles (id, name) VALUES (UUID(), 'MANAGER');
+INSERT INTO roles (id, name) VALUES (UUID(), 'HR');
+INSERT INTO roles (id, name) VALUES (UUID(), 'EMPLOYEE');
+INSERT INTO roles (id, name) VALUES (UUID(), 'SUPPORT');
+INSERT INTO roles (id, name) VALUES (UUID(), 'CANDIDATE');
+
+
+CREATE TABLE users (
+  id CHAR(36) PRIMARY KEY,
+  full_name VARCHAR(100) NOT NULL,
+  email VARCHAR(120) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  phone VARCHAR(15),
+  profile_file_id CHAR(36), -- FK → file_metadata
+  status VARCHAR(20) DEFAULT 'ACTIVE', -- ACTIVE, BLOCKED
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE roles (
+  id CHAR(36) PRIMARY KEY,
+  name VARCHAR(50) UNIQUE NOT NULL  -- ADMIN, HR, MANAGER, EMPLOYEE
+);
+
+CREATE TABLE user_roles (
+  user_id CHAR(36),
+  role_id CHAR(36),
+  PRIMARY KEY (user_id, role_id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
+);
+
+CREATE TABLE file_metadata (
+  id CHAR(36) PRIMARY KEY,
+  file_name VARCHAR(255),
+  bucket VARCHAR(100),
+  object_key VARCHAR(255),
+  mime_type VARCHAR(100),
+  size BIGINT,
+  uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  uploaded_by CHAR(36)
+);
+
+
+CREATE INDEX idx_users_email ON users(email);
